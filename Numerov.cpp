@@ -61,7 +61,7 @@ int main(){
     vector<double> chi_list(N);
     vector<double> dxdr_list(N);
     vector<double> E_list(100000);
-    vector<double> r_last_list(100000);
+    vector<double> chi_last_list(100000);
     vector<double> r_best(N);
     vector<double> chi_best(N);
 
@@ -70,7 +70,7 @@ int main(){
 
     int ii = 0;
     double Ebest = 0;
-    for (double E=-14; E < -13; E+=0.00001){
+    for (double E=-13.6; E < -13.5; E+=0.00001) {
         r_list[0] = r_int;
         r_list[1] = r_int + h;
         chi_list[0] = chi_int;
@@ -86,6 +86,7 @@ int main(){
             chi(r_list, chi_list, i, l, Etmp, h);
             dxdr_list[i] = dxdr_list[i-1] + k2(r_list[i-1], l, E)*chi_list[i-1]*h;
         }
+        chi_last_list[ii] = 1 / (chi_list[N-1]*chi_list[N-1]);
         //cout << chi_list[N-1] << endl;
         if ((ii == 0) || (1 / (chi_list[N-1]*chi_list[N-1]) > 1 / (chi_best[N-1]*chi_best[N-1]))){
             r_best = r_list;
@@ -95,6 +96,9 @@ int main(){
         }
         ii++;
     }
+    cout << Ebest << endl;
+    cout << mu << endl;
+    cout << -alpha*alpha*mu*0.5 << endl;
 
     //vector<double> a = {1,2,3};
     //double ipcheck = std::inner_product(a.begin(), a.end(), a.begin(), 0.0);
@@ -119,7 +123,7 @@ int main(){
     vector<double> r_list2(N);
     vector<double> chi_list2(N);
     vector<double> dxdr_list2(N);
-    E = -13.5959e-6;
+    E = Ebest;
 
     r_int = r_max;
     r_list2[0] = r_int;
@@ -156,16 +160,31 @@ int main(){
 
     std::ofstream ofile("Numerov001_l0.dat");
     std::ofstream ofile2("Numerov001_l0_2.dat");
+    std::ofstream ofile1_5("Numerov001_l0_1.dat");
+    std::ofstream ofile3("Esearch_l0.dat");
     ofile << "r" << " " << "chi" << endl;
     ofile2 << "r" << " " << "chi" << endl;
+    ofile2 << "E" << " " << "1/chi2" << endl;
     ofile << std::setprecision(15);
+    ofile1_5 << std::setprecision(15);
     ofile2 << std::setprecision(15);
+    ofile3 << std::setprecision(15);
     for (int i = 0; i < N; i++){
         ofile << r_best[i] << " " << chi_best[i]*chi_best[i] << " " << dxdr_list[i] << endl;
         ofile2 << r_list2[i] << " " << chi_list2[i] << " " << dxdr_list[i] << endl;
+        if (i < N/2) {
+            ofile1_5 << r_best[i] << " " << chi_best[i]*chi_best[i] << " " << dxdr_list[i] << endl;
+        } else {
+            ofile1_5 << r_best[i] << " " << chi_best[i]*chi_best[i] << " " << dxdr_list[i] << endl;                    
+        }
+
+    }
+    for (int i = 0; i < 100000; i++){
+        ofile3 << E_list[i] << " " << chi_last_list[i] << endl;
     }
     ofile.close();
     ofile2.close();
+    ofile3.close();
 
     return 0;
 
