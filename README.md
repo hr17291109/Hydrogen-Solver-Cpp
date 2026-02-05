@@ -19,7 +19,7 @@ $$ (K + V)\mathbf{c} = E N \mathbf{c} $$
 ### Results (GEM)
 The calculated ground state energy matches the theoretical value (-13.6 eV) with high precision.
 
-![GEM Wavefunction](images/gem_result.png)
+![GEM Wavefunction](Code_Generated_Image.png)
 
 ## 2. Numerov Method
 
